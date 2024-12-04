@@ -1,39 +1,49 @@
-// Lesson 1: Variables and Basic Data Types
+// Lesson 2: Control Flow
 
 fn main() {
-    // Immutable variable
-    let x = 5;
-    println!("The value of x is: {}", x);
+    // Using if-else statements to make decisions based on conditions
+    let number = 7;
 
-    // Mutable variable
-    let mut y = 10;
-    println!("The value of y is: {}", y);
-    y = 20;
-    println!("The new value of y is: {}", y);
+    if number < 5 {
+        println!("The number is less than 5");
+    } else if number > 5 {
+        println!("The number is greater than 5");
+    } else {
+        println!("The number is exactly 5");
+    }
 
-    // Basic Data Types
+    // Using match statements for pattern matching
+    let number = 3;
 
-    // Integer
-    let int: i32 = 42;
-    println!("Integer: {}", int);
+    match number {
+        1 => println!("One"),
+        2 => println!("Two"),
+        3 => println!("Three"),
+        _ => println!("Something else"),
+    }
 
-    // Floating-point number
-    let float: f64 = 3.14;
-    println!("Float: {}", float);
+    // Using different types of loops
 
-    // Boolean
-    let is_true: bool = true;
-    println!("Boolean: {}", is_true);
+    // Infinite loop with break condition
+    let mut count = 0;
+    loop {
+        count += 1;
+        if count == 3 {
+            break;
+        }
+        println!("Loop count: {}", count);
+    }
 
-    // Character
-    let letter: char = 'R';
-    println!("Character: {}", letter);
+    // While loop
+    let mut num = 3;
+    while num != 0 {
+        println!("While num: {}", num);
+        num -= 1;
+    }
 
-    // Tuple
-    let tuple: (i32, f64, char) = (500, 6.4, 'T');
-    println!("Tuple: ({}, {}, {})", tuple.0, tuple.1, tuple.2);
-
-    // Array
-    let array: [i32; 4] = [1, 2, 3, 4];
-    println!("Array: {:?}", array);
+    // For loop iterating over an array
+    let arr = [10, 20, 30, 40, 50];
+    for element in arr.iter() {
+        println!("Array element: {}", element);
+    }
 }
