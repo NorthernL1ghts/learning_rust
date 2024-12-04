@@ -1,60 +1,58 @@
-// Lesson 13: Traits and Generics
+// Lesson 14: Asynchronous Programming
 
-// Define a trait called Summary
-trait Summary {
-    fn summarize(&self) -> String;
+use std::time::Duration;
+use tokio::time::sleep;
+use tokio::fs::File;
+use tokio::io::{self, AsyncReadExt};
+use tokio::task;
+
+// Define an asynchronous function
+async fn say_hello() {
+    // Sleep for 2 seconds asynchronously
+    sleep(Duration::from_secs(2)).await;
+    println!("Hello, world!");
 }
 
-// Implement the Summary trait for the NewsArticle struct
-struct NewsArticle {
-    headline: String,
-    location: String,
-    author: String,
-    content: String,
+// Define an asynchronous function to read a file
+async fn read_file(path: &str) -> io::Result<String> {
+    // Open the file asynchronously
+    let mut file = File::open(path).await?;
+    let mut contents = String::new();
+    // Read the contents of the file asynchronously
+    file.read_to_string(&mut contents).await?;
+    Ok(contents)
 }
 
-impl Summary for NewsArticle {
-    fn summarize(&self) -> String {
-        format!("{}, by {} ({}) - {}", self.headline, self.author, self.location, self.content)
-    }
+// Define an asynchronous function for task one
+async fn task_one() {
+    // Sleep for 1 second asynchronously
+    sleep(Duration::from_secs(1)).await;
+    println!("Task one completed!");
 }
 
-fn main() {
-    // Create a NewsArticle instance
-    let article = NewsArticle {
-        headline: String::from("Breaking News!"),
-        location: String::from("Somewhere"),
-        author: String::from("Someone"),
-        content: String::from("Something important happened."),
-    };
-
-    // Print the summary of the article using the Summary trait method
-    println!("New article available! {}", article.summarize());
-
-    // Using generics in a function
-    // Create a list of integers
-    let number_list = vec![34, 50, 25, 100, 65];
-    // Find the largest number in the list using the generic function
-    let result = largest(&number_list);
-    println!("The largest number is {}", result);
-
-    // Create a list of characters
-    let char_list = vec!['y', 'm', 'a', 'q'];
-    // Find the largest character in the list using the same generic function
-    let result = largest(&char_list);
-    println!("The largest char is {}", result);
+// Define an asynchronous function for task two
+async fn task_two() {
+    // Sleep for 2 seconds asynchronously
+    sleep(Duration::from_secs(2)).await;
+    println!("Task two completed!");
 }
 
-// Define a generic function to find the largest element in a list
-// The function works with any type T that implements the PartialOrd trait
-fn largest<T: PartialOrd>(list: &[T]) -> &T {
-    let mut largest = &list[0]; // Assume the first element is the largest initially
+#[tokio::main]
+async fn main() {
+    // Call the async function and await its completion
+    say_hello().await;
 
-    for item in list.iter() { // Iterate over the list
-        if item > largest { // Update the largest element if the current item is greater
-            largest = item;
-        }
+    // Call the read_file function and handle the result
+    match read_file("hello.txt").await {
+        Ok(contents) => println!("File contents: {}", contents),
+        Err(e) => println!("Error reading file: {}", e),
     }
 
-    largest // Return the largest element found
+    // Spawn two asynchronous tasks
+    let handle1 = task::spawn(task_one());
+    let handle2 = task::spawn(task_two());
+
+    // Await the completion of both tasks
+    handle1.await.unwrap();
+    handle2.await.unwrap();
 }
