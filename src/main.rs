@@ -1,31 +1,62 @@
-// Lesson 9: Error Handling
+// Lesson 10: Concurrency
 
-use std::fs::File;
-use std::io::{self, Read};
-use std::path::Path;
+use std::sync::{Arc, Mutex, mpsc};
+use std::thread;
+use std::time::Duration;
 
 fn main() {
-    // Handling recoverable errors with Result
-    match read_username_from_file("hello.txt") {
-        Ok(username) => println!("Username: {}", username),
-        Err(e) => println!("Error reading file: {}", e),
+    // Using threads
+    // Create a new thread that will print messages
+    let handle = thread::spawn(|| {
+        for i in 1..10 {
+            println!("Hi number {} from the spawned thread!", i);
+            thread::sleep(Duration::from_millis(1)); // Simulate work by sleeping
+        }
+    });
+
+    // Run code in the main thread
+    for i in 1..5 {
+        println!("Hi number {} from the main thread!", i);
+        thread::sleep(Duration::from_millis(1)); // Simulate work by sleeping
     }
 
-    // Handling unrecoverable errors with panic!
-    let _v = vec![1, 2, 3];
+    // Wait for the spawned thread to finish execution
+    handle.join().unwrap();
 
-    // This will cause the program to panic
-    // Uncommenting the line below will terminate the program
-    // _v[99];
-}
+    // Using message passing
+    // Create a channel for sending messages between threads
+    let (tx, rx) = mpsc::channel();
+    
+    // Spawn a new thread and move the transmitter (tx) into it
+    thread::spawn(move || {
+        let val = String::from("hi");
+        tx.send(val).unwrap(); // Send a message through the channel
+    });
 
-fn read_username_from_file(filename: &str) -> Result<String, io::Error> {
-    let path = Path::new(filename);
-    if !path.exists() {
-        return Err(io::Error::new(io::ErrorKind::NotFound, "File not found"));
+    // Receive the message in the main thread
+    let received = rx.recv().unwrap();
+    println!("Got: {}", received);
+
+    // Using shared state with Arc and Mutex
+    // Create an Arc (Atomic Reference Counted) and Mutex to safely share and modify data across threads
+    let counter = Arc::new(Mutex::new(0));
+    let mut handles = vec![];
+
+    // Spawn multiple threads to increment the counter
+    for _ in 0..10 {
+        let counter = Arc::clone(&counter); // Clone the Arc to increase the reference count
+        let handle = thread::spawn(move || {
+            let mut num = counter.lock().unwrap(); // Acquire the lock on the Mutex
+            *num += 1; // Increment the counter
+        });
+        handles.push(handle);
     }
-    let mut file = File::open(&path)?;
-    let mut username = String::new();
-    file.read_to_string(&mut username)?;
-    Ok(username)
+
+    // Wait for all threads to finish
+    for handle in handles {
+        handle.join().unwrap();
+    }
+
+    // Print the result
+    println!("Result: {}", *counter.lock().unwrap());
 }
