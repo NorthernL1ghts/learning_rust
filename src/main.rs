@@ -1,62 +1,38 @@
-// Lesson 10: Concurrency
-
-use std::sync::{Arc, Mutex, mpsc};
-use std::thread;
-use std::time::Duration;
+// Lesson 11: Smart Pointers
 
 fn main() {
-    // Using threads
-    // Create a new thread that will print messages
-    let handle = thread::spawn(|| {
-        for i in 1..10 {
-            println!("Hi number {} from the spawned thread!", i);
-            thread::sleep(Duration::from_millis(1)); // Simulate work by sleeping
-        }
-    });
+    // Using Box<T>
+    // Create a box to store data on the heap
+    let b = Box::new(5);
+    println!("b = {}", b);
 
-    // Run code in the main thread
-    for i in 1..5 {
-        println!("Hi number {} from the main thread!", i);
-        thread::sleep(Duration::from_millis(1)); // Simulate work by sleeping
+    // Using Rc<T>
+    // Rc<T> enables multiple ownership by keeping a reference count
+    use std::rc::Rc;
+
+    // Create a reference-counted integer
+    let a = Rc::new(5);
+    // Clone the Rc to create additional references
+    let b = Rc::clone(&a);
+    let c = Rc::clone(&a);
+
+    // Print the reference count and values
+    println!("Reference count: {}", Rc::strong_count(&a));
+    println!("a = {}, b = {}, c = {}", a, b, c);
+
+    // Using RefCell<T>
+    // RefCell<T> allows interior mutability with runtime borrow checking
+    use std::cell::RefCell;
+
+    // Create a RefCell containing an integer
+    let x = RefCell::new(5);
+
+    // Borrow a mutable reference to the contained value
+    {
+        let mut y = x.borrow_mut();
+        *y += 1; // Modify the value inside the RefCell
     }
 
-    // Wait for the spawned thread to finish execution
-    handle.join().unwrap();
-
-    // Using message passing
-    // Create a channel for sending messages between threads
-    let (tx, rx) = mpsc::channel();
-    
-    // Spawn a new thread and move the transmitter (tx) into it
-    thread::spawn(move || {
-        let val = String::from("hi");
-        tx.send(val).unwrap(); // Send a message through the channel
-    });
-
-    // Receive the message in the main thread
-    let received = rx.recv().unwrap();
-    println!("Got: {}", received);
-
-    // Using shared state with Arc and Mutex
-    // Create an Arc (Atomic Reference Counted) and Mutex to safely share and modify data across threads
-    let counter = Arc::new(Mutex::new(0));
-    let mut handles = vec![];
-
-    // Spawn multiple threads to increment the counter
-    for _ in 0..10 {
-        let counter = Arc::clone(&counter); // Clone the Arc to increase the reference count
-        let handle = thread::spawn(move || {
-            let mut num = counter.lock().unwrap(); // Acquire the lock on the Mutex
-            *num += 1; // Increment the counter
-        });
-        handles.push(handle);
-    }
-
-    // Wait for all threads to finish
-    for handle in handles {
-        handle.join().unwrap();
-    }
-
-    // Print the result
-    println!("Result: {}", *counter.lock().unwrap());
+    // Print the modified value
+    println!("x = {:?}", x);
 }
