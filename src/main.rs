@@ -1,90 +1,53 @@
-// Lesson 6: Enums and Pattern Matching
+// Lesson 7: Vectors
 
-// Define an enum for different types of coins
-enum Coin {
-    Penny,
-    Nickel,
-    Dime,
-    Quarter(State),
-}
-
-// Define another enum for US states
-#[derive(Debug)]
-enum State {
-    Alabama,
-    Alaska,
-    // add more states as needed
-}
-
-// Define an enum for different message types
-enum Message {
-    Quit,
-    Move { x: i32, y: i32 },
-    Write(String),
-    ChangeColor(i32, i32, i32),
-}
-
-// Function to process messages based on their type
-fn process_message(msg: Message) {
-    match msg {
-        Message::Quit => println!("Quit message received."),
-        Message::Move { x, y } => println!("Move message to ({}, {}).", x, y),
-        Message::Write(text) => println!("Write message: {}", text),
-        Message::ChangeColor(r, g, b) => println!("Change color to RGB({}, {}, {}).", r, g, b),
-    }
-}
-
-// main function
 fn main() {
-    // Using all Coin variants
-    let coin1 = Coin::Penny;
-    let coin2 = Coin::Nickel;
-    let coin3 = Coin::Dime;
-    let coin4 = Coin::Quarter(State::Alabama);
-    let coin5 = Coin::Quarter(State::Alaska); // Adding Alaska variant
+    // Creating an empty vector
+    let mut v: Vec<i32> = Vec::new();
 
-    match coin1 {
-        Coin::Penny => println!("This is a penny."),
-        Coin::Nickel => println!("This is a nickel."),
-        Coin::Dime => println!("This is a dime."),
-        Coin::Quarter(state) => println!("This is a quarter from {:?}.", state),
+    // Adding elements to the vector
+    v.push(1);
+    v.push(2);
+    v.push(3);
+
+    // Creating a vector with initial elements
+    let v2 = vec![1, 2, 3, 4, 5];
+
+    println!("Vector v: {:?}", v);
+    println!("Vector v2: {:?}", v2);
+
+    // Accessing elements in a vector
+    let v = vec![10, 20, 30, 40, 50];
+
+    // Using indexing (may panic if the index is out of bounds)
+    let third = &v[2];
+    println!("The third element is {}", third);
+
+    // Using the get method (returns an Option<&T>)
+    match v.get(2) {
+        Some(third) => println!("The third element is {}", third),
+        None => println!("There is no third element."),
     }
 
-    match coin2 {
-        Coin::Penny => println!("This is a penny."),
-        Coin::Nickel => println!("This is a nickel."),
-        Coin::Dime => println!("This is a dime."),
-        Coin::Quarter(state) => println!("This is a quarter from {:?}.", state),
+    // Iterating over a vector
+    let v = vec![100, 200, 300, 400, 500];
+
+    // Iterating with a for loop
+    for i in &v {
+        println!("Element: {}", i);
     }
 
-    match coin3 {
-        Coin::Penny => println!("This is a penny."),
-        Coin::Nickel => println!("This is a nickel."),
-        Coin::Dime => println!("This is a dime."),
-        Coin::Quarter(state) => println!("This is a quarter from {:?}.", state),
+    // Iterating with an iterator
+    for i in v.iter() {
+        println!("Element (iterator): {}", i);
     }
 
-    match coin4 {
-        Coin::Penny => println!("This is a penny."),
-        Coin::Nickel => println!("This is a nickel."),
-        Coin::Dime => println!("This is a dime."),
-        Coin::Quarter(state) => println!("This is a quarter from {:?}.", state),
+    // Modifying elements in a mutable vector
+    let mut v = vec![1, 2, 3, 4, 5];
+
+    // Iterating and modifying elements
+    for i in &mut v {
+        *i += 50;
     }
 
-    match coin5 {
-        Coin::Penny => println!("This is a penny."),
-        Coin::Nickel => println!("This is a nickel."),
-        Coin::Dime => println!("This is a dime."),
-        Coin::Quarter(state) => println!("This is a quarter from {:?}.", state),
-    }
-
-    let msg1 = Message::Quit;
-    let msg2 = Message::Move { x: 10, y: 20 };
-    let msg3 = Message::Write(String::from("Hello"));
-    let msg4 = Message::ChangeColor(255, 0, 0);
-
-    process_message(msg1);
-    process_message(msg2);
-    process_message(msg3);
-    process_message(msg4);
+    println!("Modified vector: {:?}", v);
 }
