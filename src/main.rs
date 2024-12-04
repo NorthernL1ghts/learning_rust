@@ -1,53 +1,57 @@
-// Lesson 7: Vectors
+// Lesson 8: Hash Maps
+
+use std::collections::HashMap;
 
 fn main() {
-    // Creating an empty vector
-    let mut v: Vec<i32> = Vec::new();
+    // Creating an empty hash map
+    let mut scores = HashMap::new();
 
-    // Adding elements to the vector
-    v.push(1);
-    v.push(2);
-    v.push(3);
+    // Adding key-value pairs to the hash map
+    scores.insert(String::from("Blue"), 10);
+    scores.insert(String::from("Yellow"), 50);
 
-    // Creating a vector with initial elements
-    let v2 = vec![1, 2, 3, 4, 5];
+    println!("Scores: {:?}", scores);
 
-    println!("Vector v: {:?}", v);
-    println!("Vector v2: {:?}", v2);
+    // Creating a hash map with initial key-value pairs
+    let teams = vec![String::from("Blue"), String::from("Yellow")];
+    let initial_scores = vec![10, 50];
+    let scores: HashMap<_, _> = teams.into_iter().zip(initial_scores.into_iter()).collect();
 
-    // Accessing elements in a vector
-    let v = vec![10, 20, 30, 40, 50];
+    println!("Initial scores: {:?}", scores);
 
-    // Using indexing (may panic if the index is out of bounds)
-    let third = &v[2];
-    println!("The third element is {}", third);
+    // Accessing values in a hash map
+    let mut scores = HashMap::new();
+    scores.insert(String::from("Blue"), 10);
+    scores.insert(String::from("Yellow"), 50);
 
-    // Using the get method (returns an Option<&T>)
-    match v.get(2) {
-        Some(third) => println!("The third element is {}", third),
-        None => println!("There is no third element."),
+    let team_name = String::from("Blue");
+    match scores.get(&team_name) {
+        Some(score) => println!("The score for {} is {}", team_name, score),
+        None => println!("No score found for {}", team_name),
     }
 
-    // Iterating over a vector
-    let v = vec![100, 200, 300, 400, 500];
+    // Iterating over a hash map
+    let mut scores = HashMap::new();
+    scores.insert(String::from("Blue"), 10);
+    scores.insert(String::from("Yellow"), 50);
 
-    // Iterating with a for loop
-    for i in &v {
-        println!("Element: {}", i);
+    for (key, value) in &scores {
+        println!("{}: {}", key, value);
     }
 
-    // Iterating with an iterator
-    for i in v.iter() {
-        println!("Element (iterator): {}", i);
-    }
+    // Updating values in a hash map
+    let mut scores = HashMap::new();
+    scores.insert(String::from("Blue"), 10);
 
-    // Modifying elements in a mutable vector
-    let mut v = vec![1, 2, 3, 4, 5];
+    // Overwriting a value
+    scores.insert(String::from("Blue"), 25);
+    println!("Updated score for Blue: {:?}", scores.get("Blue"));
 
-    // Iterating and modifying elements
-    for i in &mut v {
-        *i += 50;
-    }
+    // Using the entry method to insert a value if the key does not exist
+    scores.entry(String::from("Yellow")).or_insert(50);
+    println!("Scores after inserting Yellow: {:?}", scores);
 
-    println!("Modified vector: {:?}", v);
+    // Using the entry method to update a value if the key exists
+    scores.entry(String::from("Blue")).and_modify(|e| *e += 10);
+    println!("Scores after modifying Blue: {:?}", scores);
 }
