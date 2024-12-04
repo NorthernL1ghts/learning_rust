@@ -1,0 +1,21 @@
+# Binaries for programs and libraries
+bin/
+bin-int/
+build/
+target/
+
+# Rust/Cargo
+Cargo.lock
+*.rs.bk
+
+# Platform-specific
+.DS_Store
+Thumbs.db
+
+# Visual Studio Code
+.vscode/
+.vs/
+
+# Other
+*.log
+*.tmp
