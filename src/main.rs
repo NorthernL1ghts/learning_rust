@@ -1,42 +1,131 @@
-// Lesson 16: Error Handling
+// Lesson 17: Advanced Data Structures
 
-use std::fs::File;
-use std::io::{self, Read};
+use std::rc::Rc;
+use std::cell::RefCell;
 
-// Define a function to read the content of a file
-// The function returns a Result with the file content as a String, or an io::Error
-fn read_file_content(filename: &str) -> Result<String, io::Error> {
-    // Attempt to open the file
-    let mut file = File::open(filename)?;
-    let mut content = String::new();
-    // Attempt to read the file's content into the string
-    file.read_to_string(&mut content)?;
-    // Return the file content if successful
-    Ok(content)
+// Define a Node struct for the linked list
+#[derive(Debug)]
+struct Node {
+    value: i32, // The value stored in this node
+    next: Option<Rc<RefCell<Node>>>, // The next node in the list
 }
 
-// Define a function to find a word in a string
-// The function returns an Option with the index of the word, or None if not found
-fn find_word(s: &str, word: &str) -> Option<usize> {
-    s.find(word)
+// Define a LinkedList struct to manage the list
+#[derive(Debug)]
+struct LinkedList {
+    head: Option<Rc<RefCell<Node>>>, // The head (first node) of the list
+}
+
+impl LinkedList {
+    // Create a new, empty linked list
+    fn new() -> Self {
+        LinkedList { head: None }
+    }
+
+    // Add a value to the front of the list
+    fn push_front(&mut self, value: i32) {
+        // Create a new node with the given value and the current head as its next node
+        let new_node = Rc::new(RefCell::new(Node {
+            value,
+            next: self.head.take(),
+        }));
+        // Update the head to be the new node
+        self.head = Some(new_node);
+    }
+
+    // Print the values in the list
+    fn print(&self) {
+        let mut current = self.head.clone(); // Start with the head of the list
+        while let Some(node) = current { // Traverse the list
+            print!("{} -> ", node.borrow().value); // Print the value of the current node
+            current = node.borrow().next.clone(); // Move to the next node
+        }
+        println!("None"); // Indicate the end of the list
+    }
+}
+
+// Define a TreeNode struct for the binary tree
+#[derive(Debug)]
+struct TreeNode {
+    value: i32, // The value stored in this node
+    left: Option<Box<TreeNode>>, // The left child node
+    right: Option<Box<TreeNode>>, // The right child node
+}
+
+// Define a BinaryTree struct to manage the tree
+#[derive(Debug)]
+struct BinaryTree {
+    root: Option<Box<TreeNode>>, // The root (first node) of the tree
+}
+
+impl BinaryTree {
+    // Create a new, empty binary tree
+    fn new() -> Self {
+        BinaryTree { root: None }
+    }
+
+    // Insert a value into the binary tree
+    fn insert(&mut self, value: i32) {
+        // Insert the value starting from the root
+        self.root = Self::insert_node(self.root.take(), value);
+    }
+
+    // Helper method to insert a value into a tree node
+    fn insert_node(node: Option<Box<TreeNode>>, value: i32) -> Option<Box<TreeNode>> {
+        match node {
+            Some(mut n) => {
+                if value < n.value {
+                    // Recursively insert into the left subtree
+                    n.left = Self::insert_node(n.left.take(), value);
+                } else {
+                    // Recursively insert into the right subtree
+                    n.right = Self::insert_node(n.right.take(), value);
+                }
+                Some(n) // Return the modified node
+            }
+            None => Some(Box::new(TreeNode { // Create a new node if the current node is None
+                value,
+                left: None,
+                right: None,
+            })),
+        }
+    }
+
+    // Print the values in the tree (in-order traversal)
+    fn print_in_order(&self) {
+        // Helper function for in-order traversal
+        fn print_node(node: &Option<Box<TreeNode>>) {
+            if let Some(n) = node {
+                print_node(&n.left); // Visit the left subtree
+                print!("{} ", n.value); // Print the node's value
+                print_node(&n.right); // Visit the right subtree
+            }
+        }
+        print_node(&self.root); // Start from the root
+        println!(); // Newline at the end
+    }
 }
 
 fn main() {
-    // Handle the result of reading a file
-    match read_file_content("hello.txt") {
-        // If successful, print the file content
-        Ok(content) => println!("File content:\n{}", content),
-        // If there is an error, print the error message
-        Err(e) => println!("Error reading file: {}", e),
-    }
+    // LinkedList example
+    let mut list = LinkedList::new();
+    list.push_front(3); // Add 3 to the front of the list
+    list.push_front(2); // Add 2 to the front of the list
+    list.push_front(1); // Add 1 to the front of the list
 
-    // Define a sample sentence
-    let sentence = "The quick brown fox jumps over the lazy dog.";
-    // Handle the result of finding a word in the sentence
-    match find_word(sentence, "fox") {
-        // If the word is found, print the index
-        Some(index) => println!("Found 'fox' at index {}", index),
-        // If the word is not found, print a message
-        None => println!("'fox' not found"),
-    }
+    println!("LinkedList:");
+    list.print(); // Print the linked list
+
+    // BinaryTree example
+    let mut tree = BinaryTree::new();
+    tree.insert(5); // Insert 5 into the tree
+    tree.insert(3); // Insert 3 into the tree
+    tree.insert(7); // Insert 7 into the tree
+    tree.insert(2); // Insert 2 into the tree
+    tree.insert(4); // Insert 4 into the tree
+    tree.insert(6); // Insert 6 into the tree
+    tree.insert(8); // Insert 8 into the tree
+
+    println!("BinaryTree (in-order):");
+    tree.print_in_order(); // Print the binary tree in order
 }
