@@ -1,38 +1,50 @@
-// Lesson 11: Smart Pointers
+// Lesson 12: Lifetimes and References
 
 fn main() {
-    // Using Box<T>
-    // Create a box to store data on the heap
-    let b = Box::new(5);
-    println!("b = {}", b);
+    // Using references
+    // Create a string and calculate its length using a reference
+    let s1 = String::from("hello");
+    let len = calculate_length(&s1); // Pass an immutable reference to s1
 
-    // Using Rc<T>
-    // Rc<T> enables multiple ownership by keeping a reference count
-    use std::rc::Rc;
+    // Print the original string and its length
+    println!("The length of '{}' is {}.", s1, len);
 
-    // Create a reference-counted integer
-    let a = Rc::new(5);
-    // Clone the Rc to create additional references
-    let b = Rc::clone(&a);
-    let c = Rc::clone(&a);
+    // Using mutable references
+    // Create a mutable string
+    let mut s = String::from("hello");
 
-    // Print the reference count and values
-    println!("Reference count: {}", Rc::strong_count(&a));
-    println!("a = {}, b = {}, c = {}", a, b, c);
+    // Modify the string using a mutable reference
+    change(&mut s);
 
-    // Using RefCell<T>
-    // RefCell<T> allows interior mutability with runtime borrow checking
-    use std::cell::RefCell;
+    // Print the modified string
+    println!("The changed string is '{}'.", s);
 
-    // Create a RefCell containing an integer
-    let x = RefCell::new(5);
+    // Using lifetimes
+    // Create two strings to compare
+    let string1 = String::from("long string is long");
+    let string2 = String::from("xyz");
 
-    // Borrow a mutable reference to the contained value
-    {
-        let mut y = x.borrow_mut();
-        *y += 1; // Modify the value inside the RefCell
+    // Determine the longest string
+    let result = longest(string1.as_str(), string2.as_str());
+    println!("The longest string is '{}'", result);
+}
+
+// Function to calculate the length of a string using a reference
+fn calculate_length(s: &String) -> usize {
+    s.len() // Return the length of the string
+}
+
+// Function to change a string using a mutable reference
+fn change(s: &mut String) {
+    s.push_str(", world"); // Append to the original string
+}
+
+// Function to determine the longest of two string slices
+// The lifetime annotation 'a ensures the returned reference is valid
+fn longest<'a>(x: &'a str, y: &'a str) -> &'a str {
+    if x.len() > y.len() {
+        x // Return x if it is longer
+    } else {
+        y // Otherwise, return y
     }
-
-    // Print the modified value
-    println!("x = {:?}", x);
 }
