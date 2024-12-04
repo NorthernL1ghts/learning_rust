@@ -1,57 +1,31 @@
-// Lesson 8: Hash Maps
+// Lesson 9: Error Handling
 
-use std::collections::HashMap;
+use std::fs::File;
+use std::io::{self, Read};
+use std::path::Path;
 
 fn main() {
-    // Creating an empty hash map
-    let mut scores = HashMap::new();
-
-    // Adding key-value pairs to the hash map
-    scores.insert(String::from("Blue"), 10);
-    scores.insert(String::from("Yellow"), 50);
-
-    println!("Scores: {:?}", scores);
-
-    // Creating a hash map with initial key-value pairs
-    let teams = vec![String::from("Blue"), String::from("Yellow")];
-    let initial_scores = vec![10, 50];
-    let scores: HashMap<_, _> = teams.into_iter().zip(initial_scores.into_iter()).collect();
-
-    println!("Initial scores: {:?}", scores);
-
-    // Accessing values in a hash map
-    let mut scores = HashMap::new();
-    scores.insert(String::from("Blue"), 10);
-    scores.insert(String::from("Yellow"), 50);
-
-    let team_name = String::from("Blue");
-    match scores.get(&team_name) {
-        Some(score) => println!("The score for {} is {}", team_name, score),
-        None => println!("No score found for {}", team_name),
+    // Handling recoverable errors with Result
+    match read_username_from_file("hello.txt") {
+        Ok(username) => println!("Username: {}", username),
+        Err(e) => println!("Error reading file: {}", e),
     }
 
-    // Iterating over a hash map
-    let mut scores = HashMap::new();
-    scores.insert(String::from("Blue"), 10);
-    scores.insert(String::from("Yellow"), 50);
+    // Handling unrecoverable errors with panic!
+    let _v = vec![1, 2, 3];
 
-    for (key, value) in &scores {
-        println!("{}: {}", key, value);
+    // This will cause the program to panic
+    // Uncommenting the line below will terminate the program
+    // _v[99];
+}
+
+fn read_username_from_file(filename: &str) -> Result<String, io::Error> {
+    let path = Path::new(filename);
+    if !path.exists() {
+        return Err(io::Error::new(io::ErrorKind::NotFound, "File not found"));
     }
-
-    // Updating values in a hash map
-    let mut scores = HashMap::new();
-    scores.insert(String::from("Blue"), 10);
-
-    // Overwriting a value
-    scores.insert(String::from("Blue"), 25);
-    println!("Updated score for Blue: {:?}", scores.get("Blue"));
-
-    // Using the entry method to insert a value if the key does not exist
-    scores.entry(String::from("Yellow")).or_insert(50);
-    println!("Scores after inserting Yellow: {:?}", scores);
-
-    // Using the entry method to update a value if the key exists
-    scores.entry(String::from("Blue")).and_modify(|e| *e += 10);
-    println!("Scores after modifying Blue: {:?}", scores);
+    let mut file = File::open(&path)?;
+    let mut username = String::new();
+    file.read_to_string(&mut username)?;
+    Ok(username)
 }
