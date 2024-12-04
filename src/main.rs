@@ -1,40 +1,38 @@
-// Lesson 3: Functions
+// Lesson 4: Ownership, Borrowing, and References
 
 fn main() {
-    // Calling the greet function
-    greet("Rustacean");
+    // Ownership
+    let s1 = String::from("hello");
+    let s2 = s1; // s1's value is moved to s2
+    // s1 is no longer valid here; it's been moved
+    // println!("{}", s1); // This line would cause a compile-time error
+    println!("{}", s2);
 
-    // Calling the add function and printing the result
-    let result = add(5, 3);
-    println!("The sum is: {}", result);
+    // Borrowing
+    let s3 = String::from("hello");
 
-    // Calling the square function and printing the result
-    let square_result = square(4);
-    println!("The square of 4 is: {}", square_result);
+    // Immutable borrow
+    let len = calculate_length(&s3);
+    println!("The length of '{}' is {}", s3, len);
 
-    // Calling the calculate_area function and printing the result
-    let width = 10;
-    let height = 5;
-    let area = calculate_area(width, height);
-    println!("The area of the rectangle is: {}", area);
+    // Mutable borrow
+    let mut s4 = String::from("hello");
+    change(&mut s4);
+    println!("{}", s4);
+
+    // References and Slices
+    let s5 = String::from("hello world");
+    let hello = &s5[0..5];
+    let world = &s5[6..11];
+    println!("{} {}", hello, world);
 }
 
-// Defining a function to greet the user
-fn greet(name: &str) {
-    println!("Hello, {}!", name);
+// Function to calculate the length of a string
+fn calculate_length(s: &String) -> usize {
+    s.len()
 }
 
-// Function with parameters and a return value to add two numbers
-fn add(a: i32, b: i32) -> i32 {
-    a + b // Return statement
-}
-
-// Function that returns the square of a number
-fn square(x: i32) -> i32 {
-    x * x // This is an expression, so no semicolon
-}
-
-// Function to calculate the area of a rectangle
-fn calculate_area(width: i32, height: i32) -> i32 {
-    width * height
+// Function to change a mutable string by adding a suffix
+fn change(s: &mut String) {
+    s.push_str(", world");
 }
