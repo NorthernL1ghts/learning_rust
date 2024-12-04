@@ -1,42 +1,90 @@
-// Lesson 5: Structs and Methods
+// Lesson 6: Enums and Pattern Matching
 
+// Define an enum for different types of coins
+enum Coin {
+    Penny,
+    Nickel,
+    Dime,
+    Quarter(State),
+}
+
+// Define another enum for US states
+#[derive(Debug)]
+enum State {
+    Alabama,
+    Alaska,
+    // add more states as needed
+}
+
+// Define an enum for different message types
+enum Message {
+    Quit,
+    Move { x: i32, y: i32 },
+    Write(String),
+    ChangeColor(i32, i32, i32),
+}
+
+// Function to process messages based on their type
+fn process_message(msg: Message) {
+    match msg {
+        Message::Quit => println!("Quit message received."),
+        Message::Move { x, y } => println!("Move message to ({}, {}).", x, y),
+        Message::Write(text) => println!("Write message: {}", text),
+        Message::ChangeColor(r, g, b) => println!("Change color to RGB({}, {}, {}).", r, g, b),
+    }
+}
+
+// main function
 fn main() {
-    // Creating a new user
-    let mut user1 = User {
-        username: String::from("alice"),
-        email: String::from("alice@example.com"),
-        sign_in_count: 1,
-        active: true,
-    };
+    // Using all Coin variants
+    let coin1 = Coin::Penny;
+    let coin2 = Coin::Nickel;
+    let coin3 = Coin::Dime;
+    let coin4 = Coin::Quarter(State::Alabama);
+    let coin5 = Coin::Quarter(State::Alaska); // Adding Alaska variant
 
-    // Using the email field to avoid the warning
-    println!("User's email: {}", user1.email);
-
-    // Calling methods on the user
-    user1.sign_in();
-    user1.deactivate();
-    println!("User active status: {}", user1.active);
-    println!("{} has signed in {} times.", user1.username, user1.sign_in_count);
-}
-
-// Define a User struct
-struct User {
-    username: String,
-    email: String,
-    sign_in_count: u64,
-    active: bool,
-}
-
-// Implement methods for the User struct
-impl User {
-    // Method to increment the sign-in count
-    fn sign_in(&mut self) {
-        self.sign_in_count += 1;
-        println!("{} has signed in {} times.", self.username, self.sign_in_count);
+    match coin1 {
+        Coin::Penny => println!("This is a penny."),
+        Coin::Nickel => println!("This is a nickel."),
+        Coin::Dime => println!("This is a dime."),
+        Coin::Quarter(state) => println!("This is a quarter from {:?}.", state),
     }
 
-    // Method to deactivate the user
-    fn deactivate(&mut self) {
-        self.active = false;
+    match coin2 {
+        Coin::Penny => println!("This is a penny."),
+        Coin::Nickel => println!("This is a nickel."),
+        Coin::Dime => println!("This is a dime."),
+        Coin::Quarter(state) => println!("This is a quarter from {:?}.", state),
     }
+
+    match coin3 {
+        Coin::Penny => println!("This is a penny."),
+        Coin::Nickel => println!("This is a nickel."),
+        Coin::Dime => println!("This is a dime."),
+        Coin::Quarter(state) => println!("This is a quarter from {:?}.", state),
+    }
+
+    match coin4 {
+        Coin::Penny => println!("This is a penny."),
+        Coin::Nickel => println!("This is a nickel."),
+        Coin::Dime => println!("This is a dime."),
+        Coin::Quarter(state) => println!("This is a quarter from {:?}.", state),
+    }
+
+    match coin5 {
+        Coin::Penny => println!("This is a penny."),
+        Coin::Nickel => println!("This is a nickel."),
+        Coin::Dime => println!("This is a dime."),
+        Coin::Quarter(state) => println!("This is a quarter from {:?}.", state),
+    }
+
+    let msg1 = Message::Quit;
+    let msg2 = Message::Move { x: 10, y: 20 };
+    let msg3 = Message::Write(String::from("Hello"));
+    let msg4 = Message::ChangeColor(255, 0, 0);
+
+    process_message(msg1);
+    process_message(msg2);
+    process_message(msg3);
+    process_message(msg4);
 }
