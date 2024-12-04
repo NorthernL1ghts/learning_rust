@@ -1,49 +1,40 @@
-// Lesson 2: Control Flow
+// Lesson 3: Functions
 
 fn main() {
-    // Using if-else statements to make decisions based on conditions
-    let number = 7;
+    // Calling the greet function
+    greet("Rustacean");
 
-    if number < 5 {
-        println!("The number is less than 5");
-    } else if number > 5 {
-        println!("The number is greater than 5");
-    } else {
-        println!("The number is exactly 5");
-    }
+    // Calling the add function and printing the result
+    let result = add(5, 3);
+    println!("The sum is: {}", result);
 
-    // Using match statements for pattern matching
-    let number = 3;
+    // Calling the square function and printing the result
+    let square_result = square(4);
+    println!("The square of 4 is: {}", square_result);
 
-    match number {
-        1 => println!("One"),
-        2 => println!("Two"),
-        3 => println!("Three"),
-        _ => println!("Something else"),
-    }
+    // Calling the calculate_area function and printing the result
+    let width = 10;
+    let height = 5;
+    let area = calculate_area(width, height);
+    println!("The area of the rectangle is: {}", area);
+}
 
-    // Using different types of loops
+// Defining a function to greet the user
+fn greet(name: &str) {
+    println!("Hello, {}!", name);
+}
 
-    // Infinite loop with break condition
-    let mut count = 0;
-    loop {
-        count += 1;
-        if count == 3 {
-            break;
-        }
-        println!("Loop count: {}", count);
-    }
+// Function with parameters and a return value to add two numbers
+fn add(a: i32, b: i32) -> i32 {
+    a + b // Return statement
+}
 
-    // While loop
-    let mut num = 3;
-    while num != 0 {
-        println!("While num: {}", num);
-        num -= 1;
-    }
+// Function that returns the square of a number
+fn square(x: i32) -> i32 {
+    x * x // This is an expression, so no semicolon
+}
 
-    // For loop iterating over an array
-    let arr = [10, 20, 30, 40, 50];
-    for element in arr.iter() {
-        println!("Array element: {}", element);
-    }
+// Function to calculate the area of a rectangle
+fn calculate_area(width: i32, height: i32) -> i32 {
+    width * height
 }
